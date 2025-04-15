@@ -1,8 +1,12 @@
 package cn.linmoyu.gunick.utils;
 
 import cn.linmoyu.gunick.GuNick;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+
+import java.util.regex.Pattern;
 
 public class Config {
     public static String mysql_host;
@@ -12,9 +16,11 @@ public class Config {
     public static String mysql_password;
     public static boolean mysql_ssl;
     public static boolean isLobby;
+    public static String lobbyMode;
+
     public static int nickMinLength = 3;
     public static int nickLength = 16;
-    public static String nickAllowedChar = "[\\u4e00-\\u9fa5_a-zA-Z0-9]*";
+    public static Pattern namePattern = Pattern.compile("[\\u4e00-\\u9fa5_a-zA-Z0-9]*");
 
     public static void setupConfig(Plugin plugin) {
         plugin.saveDefaultConfig();
@@ -26,6 +32,11 @@ public class Config {
         mysql_user = config.getString("database.user");
         mysql_password = config.getString("database.password");
         mysql_ssl = config.getBoolean("database.ssl");
+
+        lobbyMode = config.getString("lobbyMode");
+        if (lobbyMode.equalsIgnoreCase("true") || lobbyMode.equalsIgnoreCase("autodetect")) {
+            detectLobby();
+        }
     }
 
     public static void reloadConfig(Plugin plugin) {
@@ -33,5 +44,16 @@ public class Config {
 
         GuNick.getRemoteDatabase().close();
         GuNick.getPlugin().connectDatabase();
+    }
+
+    public static void detectLobby() {
+        if (lobbyMode.equalsIgnoreCase("true")) {
+            isLobby = true;
+            return;
+        }
+        PluginManager pm = Bukkit.getPluginManager();
+        if (pm.getPlugin("SuperLobby") != null || pm.getPlugin("DeluxeHub") != null || pm.getPlugin("Akropolis") != null) {
+            isLobby = true;
+        }
     }
 }

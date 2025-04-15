@@ -1,6 +1,7 @@
 name: GuNick
 version: '${project.version}'
 main: cn.linmoyu.gunick.GuNick
+softdepend: [ ProtocolLib ]
 
 commands:
   nick:

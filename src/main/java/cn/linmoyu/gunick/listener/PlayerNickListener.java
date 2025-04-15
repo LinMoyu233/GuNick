@@ -24,21 +24,21 @@ public class PlayerNickListener implements Listener {
         String version = GuNick.getPlugin().getDescription().getVersion();
         switch (response) {
             case SUCCESS:
-                player.setDisplayName(nickName);
-                player.setPlayerListName(nickName);
                 if (event.needRefresh()) GuNick.getPlugin().getDisguiseProvider().refreshAsPlayer(player);
+                GuNick.getNickPlayersName().put(event.getPlayerName(), nickName);
+                player.setDisplayName(nickName);
                 break;
             case FAIL_NAME_INVALID:
                 event.setCancelled(true);
-                player.sendMessage(Messages.NICK_CONTAINS_SPECIAL_CHAR_MESSAGE);
+                player.sendMessage(Messages.NICK_FAIL_CONTAINS_SPECIAL_CHAR_MESSAGE);
                 break;
             case FAIL_NAME_TOO_LONG:
                 event.setCancelled(true);
-                player.sendMessage(Messages.translate(Messages.NICK_TOO_LONG + " (v" + version + ")"));
+                player.sendMessage(Messages.translate(Messages.NICK_FAIL_TOO_LONG + " (v" + version + ")"));
                 break;
             case FAIL_NAME_ALREADY_ONLINE:
                 event.setCancelled(true);
-                player.sendMessage(Messages.translate(Messages.NICK_PLAYER_NAME_KNOWN_MESSAGE + " (v" + version + ")"));
+                player.sendMessage(Messages.translate(Messages.NICK_FAIL_PLAYER_NAME_KNOWN_MESSAGE + " (v" + version + ")"));
                 break;
             default:
                 event.setCancelled(true);

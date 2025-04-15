@@ -11,6 +11,8 @@ public class PlayerNickEvent extends Event {
     @Getter
     private final Player player;
     @Getter
+    private final String playerName;
+    @Getter
     private final String nickName;
     @Getter
     private final String nickedPrefix;
@@ -19,8 +21,9 @@ public class PlayerNickEvent extends Event {
     private final Boolean needRefresh;
     private Boolean cancelled = false;
 
-    public PlayerNickEvent(Player player, String nickName, boolean needRefresh, String nickedPrefix, String nickedSuffix) {
+    public PlayerNickEvent(Player player, String playerName, String nickName, boolean needRefresh, String nickedPrefix, String nickedSuffix) {
         this.player = player;
+        this.playerName = playerName;
         this.nickName = nickName;
         this.nickedPrefix = nickedPrefix;
         this.nickedSuffix = nickedSuffix;

@@ -5,3 +5,7 @@ database:
   user: root
   password: password
   ssl: false
+
+lobbyMode: autodetect
+# true, false, autodetect
+# AutoDetect Only Support: SuperLobby, DeluxeHub, Akropolis

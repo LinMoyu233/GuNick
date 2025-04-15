@@ -16,13 +16,10 @@ import dev.iiahmed.disguise.DisguiseManager;
 import dev.iiahmed.disguise.DisguiseProvider;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 @Getter
 public final class GuNick extends JavaPlugin {
@@ -33,14 +30,14 @@ public final class GuNick extends JavaPlugin {
     @Getter
     private static Database remoteDatabase;
     @Getter
-    private DisguiseProvider disguiseProvider = DisguiseManager.getProvider();
+    private static HashMap<String, String> nickPlayersName = new HashMap<>();
     @Getter
-    private HashMap<Player, BukkitTask> tasks;
+    private DisguiseProvider disguiseProvider = DisguiseManager.getProvider();
 
     public GuNick() {
         disguiseProvider.allowOverrideChat(false);
         disguiseProvider.setNameLength(Config.nickLength);
-        disguiseProvider.setNamePattern(Pattern.compile(Config.nickAllowedChar));
+        disguiseProvider.setNamePattern(Config.namePattern);
     }
 
     @Override
@@ -58,6 +55,9 @@ public final class GuNick extends JavaPlugin {
         pluginManager.registerEvents(new PlayerNickListener(), this);
         pluginManager.registerEvents(new PlayerQuitListener(), this);
         pluginManager.registerEvents(new PlayerUnNickListener(), this);
+//        if (pluginManager.isPluginEnabled("ProtocolLib")) {
+//        ProtocolLibrary.getProtocolManager().addPacketListener(new ChatPacketListener(this));
+//        }
 
         getCommand("nick").setExecutor(new NickCommand());
         getCommand("unnick").setExecutor(new UnNickCommand());
@@ -86,4 +86,5 @@ public final class GuNick extends JavaPlugin {
         remoteDatabase = mySQL;
         remoteDatabase.init();
     }
+
 }

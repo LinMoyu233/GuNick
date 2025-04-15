@@ -2,15 +2,11 @@ package cn.linmoyu.gunick.listener;
 
 import cn.linmoyu.gunick.GuNick;
 import cn.linmoyu.gunick.event.PlayerUnNickEvent;
-import cn.linmoyu.gunick.utils.API;
-import cn.linmoyu.gunick.utils.Config;
 import cn.linmoyu.gunick.utils.Messages;
 import dev.iiahmed.disguise.UndisguiseResponse;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitTask;
 
 public class PlayerUnNickListener implements Listener {
 
@@ -24,25 +20,14 @@ public class PlayerUnNickListener implements Listener {
         String version = GuNick.getPlugin().getDescription().getVersion();
         switch (response) {
             case SUCCESS:
-                Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
-                    String playerName = API.getPlayerName(player.getUniqueId());
-                    Bukkit.getScheduler().runTask(GuNick.getPlugin(), () -> {
-                        player.setDisplayName(playerName);
-                        player.setPlayerListName(playerName);
-                    });
-                });
                 if (event.needRefresh()) GuNick.getPlugin().getDisguiseProvider().refreshAsPlayer(player);
-
-                // 停止大厅的ActionBar消息任务
-                if (Config.isLobby) {
-                    BukkitTask task = GuNick.getPlugin().getTasks().remove(player);
-                    if (task != null) task.cancel();
-                }
+                player.setDisplayName(player.getName());
+                GuNick.getNickPlayersName().remove(player.getUniqueId());
                 player.sendMessage(Messages.UNNICK_SUCESSFUL_MESSAGE);
                 break;
             case FAIL_ALREADY_UNDISGUISED:
                 event.setCancelled(true);
-                player.sendMessage(Messages.UNNICK_ALREADY_MESSAGE);
+                player.sendMessage(Messages.UNNICK_FAIL_ALREADY_MESSAGE);
                 break;
             default:
                 event.setCancelled(true);

@@ -14,75 +14,105 @@ import java.util.UUID;
 public class NickCommand implements CommandExecutor {
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // 判断是否为后台 是则终止
-        if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(Messages.NICK_COMMAND_PLAYER_ONLY_MESSAGE);
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(Messages.NICK_COMMAND_PLAYER_ONLY_MESSAGE);
             return true;
         }
 
-        // 获取玩家
-        Player player = (Player) commandSender;
-        // 判断权限
+        Player player = (Player) sender;
+
+        // 如果Nick的玩家名为reload, 且有重载权限
+        if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+            if (!player.hasPermission(Permissions.NICK_ADMIN_RELOAD_PERMISSION)) return true;
+            Config.reloadConfig(GuNick.getPlugin());
+            player.sendMessage(Messages.NICK_RELOAD_MESSAGE);
+            return true;
+        }
+
+        // 权限校验
         if (!player.hasPermission(Permissions.NICK_USE_PERMISSION)) {
             player.sendMessage(Messages.NICK_COMMAND_NO_PERMISSION_MESSAGE);
             return true;
         }
-        // 给予用法
-        if (strings.length < 1) {
+
+        if (args.length < 1) {
             player.sendMessage(Messages.NICK_COMMAND_USE_USAGE_MAIN_MESSAGE);
             return true;
         }
-        // 获取玩家需要nick的名字
-        String nickName = strings[0];
-        // 如果玩家名为reload并且有重载权限, 重载插件
-        if (nickName.equalsIgnoreCase("reload") && player.hasPermission(Permissions.NICK_ADMIN_RELOAD_PERMISSION)) {
-            Config.reloadConfig(GuNick.getPlugin());
-            return true;
-        }
 
-        // 最小 最大 长度
-        if (nickName.length() < Config.nickMinLength) {
-            player.sendMessage(Messages.NICK_TOO_SHORT);
-            return true;
-        } else if (nickName.length() > Config.nickLength) {
-            player.sendMessage(Messages.NICK_TOO_LONG);
+        String nickName = args[0];
+        if (!validNickName(player, nickName)) {
             return true;
         }
         String playerName = player.getName(); // 需要提前缓存playerName, 否则后续存储的还是nick名字
-//        // 判断字符
-//        if (playerName.matches(Config.nickAllowedChar)) {
-//            player.sendMessage(Messages.NICK_CONTAINS_SPECIAL_CHAR_MESSAGE);
-//            return true;
-//        }
-        String prefix = LuckPermsUtil.getPrefix(player.getUniqueId());
-        String suffix = LuckPermsUtil.getSuffix(player.getUniqueId());
-        String nickedPrefix;
-        String nickedSuffix;
-        if (strings.length >= 2) {
-            nickedPrefix = Messages.translate(strings[1]);
-        } else {
-            nickedPrefix = "";
-        }
-        if (strings.length >= 3) {
-            nickedSuffix = Messages.translate(strings[2]);
-        } else {
-            nickedSuffix = "";
+
+        // 处理需要匿名的前缀后缀
+        String[] prefixSuffix = processPrefixAndSuffix(args);
+        String nickedPrefix = prefixSuffix[0];
+        String nickedSuffix = prefixSuffix[1];
+
+        // 大厅处理
+        if (Config.isLobby) {
+            Messages.handleLobbyActionBar(player);
+            // 如果玩家不能在大厅匿名 直接保存数据返回
+            if (!player.hasPermission(Permissions.NICK_ON_LOBBY_PERMISSION)) {
+                saveNickData(player, playerName, nickName, nickedPrefix, nickedSuffix);
+                return true;
+            }
         }
 
-        // callEvent, Nick逻辑交给事件监听处理
-        PlayerNickEvent playerNickEvent = new PlayerNickEvent(player, nickName, true, nickedPrefix, nickedSuffix);
+        // 触发事件
+        PlayerNickEvent playerNickEvent = new PlayerNickEvent(player, playerName, nickName, true, nickedPrefix, nickedSuffix);
         Bukkit.getPluginManager().callEvent(playerNickEvent);
-        // 如果事件没有被取消, 存储NickName去数据库
-        if (!playerNickEvent.isCancelled()) {
-            Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
-                UUID uuid = player.getUniqueId();
-                API.setPlayerNickToDatabase(uuid, playerName, nickName, prefix, suffix, nickedPrefix, nickedSuffix);
-                if (!nickedPrefix.isEmpty()) LuckPermsUtil.setPrefix(uuid, nickedPrefix);
-                if (!nickedSuffix.isEmpty()) LuckPermsUtil.setSuffix(uuid, nickedSuffix);
-            });
-            player.sendMessage(Messages.NICK_SUCESSFUL_MESSAGE);
+        if (playerNickEvent.isCancelled()) {
+            return true;
+        }
+
+        // 保存数据
+        saveNickData(player, playerName, nickName, nickedPrefix, nickedSuffix);
+
+        player.sendMessage(Messages.NICK_SUCESSFUL_MESSAGE);
+        return true;
+    }
+
+    private boolean validNickName(Player player, String nickName) {
+        if (nickName.length() < Config.nickMinLength) {
+            player.sendMessage(Messages.NICK_FAIL_TOO_SHORT);
+            return false;
+        }
+        if (nickName.length() > Config.nickLength) {
+            player.sendMessage(Messages.NICK_FAIL_TOO_LONG);
+            return false;
+        }
+        if (nickName.equals(player.getName())) {
+            player.sendMessage(Messages.NICK_FAIL_AS_SELF_MESSAGE);
+            return false;
+        }
+        if (!Config.namePattern.matcher(nickName).matches()) {
+            player.sendMessage(Messages.NICK_FAIL_CONTAINS_SPECIAL_CHAR_MESSAGE);
+            return false;
         }
         return true;
     }
+
+    private String[] processPrefixAndSuffix(String[] args) {
+        String prefix = args.length >= 2 ? Messages.translate(args[1]) : "";
+        String suffix = args.length >= 3 ? Messages.translate(args[2]) : "";
+        return new String[]{prefix, suffix};
+    }
+
+    private void saveNickData(Player player, String playerName, String nickName, String nickedPrefix, String nickedSuffix) {
+        Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
+            UUID uuid = player.getUniqueId();
+            String prefix = LuckPermsUtil.getPrefix(uuid);
+            String suffix = LuckPermsUtil.getSuffix(uuid);
+            API.setPlayerNickToDatabase(uuid, playerName, nickName,
+                    prefix, suffix, nickedPrefix, nickedSuffix);
+            if (!nickedPrefix.isEmpty()) LuckPermsUtil.setPrefix(uuid, nickedPrefix);
+            if (!nickedSuffix.isEmpty()) LuckPermsUtil.setSuffix(uuid, nickedSuffix);
+        });
+    }
+
 }
