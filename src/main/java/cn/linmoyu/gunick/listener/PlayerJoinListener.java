@@ -20,7 +20,7 @@ public class PlayerJoinListener implements Listener {
         String nickedPrefix = API.getPlayerNickedPrefix(player.getUniqueId());
         String nickedSuffix = API.getPlayerNickSuffix(player.getUniqueId());
 //            Bukkit.getScheduler().runTask(GuNick.getPlugin(), () -> {
-        PlayerNickEvent playerNickEvent = new PlayerNickEvent(player, player.getName(), nickName, false, nickedPrefix, nickedSuffix);
+        PlayerNickEvent playerNickEvent = new PlayerNickEvent(player, player.getName(), nickName, true, nickedPrefix, nickedSuffix);
         Bukkit.getPluginManager().callEvent(playerNickEvent);
 //            });
 //        });

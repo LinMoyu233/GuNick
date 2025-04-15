@@ -234,7 +234,7 @@ public class MySQL implements Database {
 
     @Override
     public String getPlayerSuffix(UUID uuid) {
-        String sql = "SELECT prefix FROM gunick WHERE uuid = ?;";
+        String sql = "SELECT suffix FROM gunick WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, uuid.toString());
