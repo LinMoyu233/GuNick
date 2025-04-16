@@ -35,7 +35,7 @@ public class UnNickCommand implements CommandExecutor {
             // 如果玩家不能在大厅匿名 直接保存数据返回
             if (!player.hasPermission(Permissions.NICK_ON_LOBBY_PERMISSION)) {
                 Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
-                    if (!API.isPlayerNicked(player.getUniqueId())) {
+                    if (!API.isPlayerNickedDataBase(player.getUniqueId())) {
                         player.sendMessage(Messages.UNNICK_FAIL_ALREADY_MESSAGE);
                         return;
                     }

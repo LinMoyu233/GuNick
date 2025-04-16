@@ -23,6 +23,12 @@ public class NickCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        // 权限校验
+        if (!player.hasPermission(Permissions.NICK_USE_PERMISSION)) {
+            player.sendMessage(Messages.NICK_COMMAND_NO_PERMISSION_MESSAGE);
+            return true;
+        }
+
         // 如果Nick的玩家名为reload, 且有重载权限
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (!player.hasPermission(Permissions.NICK_ADMIN_RELOAD_PERMISSION)) return true;
@@ -31,12 +37,10 @@ public class NickCommand implements CommandExecutor {
             return true;
         }
 
-        // 权限校验
-        if (!player.hasPermission(Permissions.NICK_USE_PERMISSION)) {
-            player.sendMessage(Messages.NICK_COMMAND_NO_PERMISSION_MESSAGE);
+        if (args.length == 1 && args[0].equalsIgnoreCase("reset")) {
+            player.performCommand("unnick");
             return true;
         }
-
         if (Config.bookGui) {
             player.performCommand("nickbookgui");
             return true;
@@ -48,10 +52,6 @@ public class NickCommand implements CommandExecutor {
         }
 
         String nickName = args[0];
-        if (nickName.equalsIgnoreCase("reset")) {
-            player.performCommand("unnick");
-            return true;
-        }
         if (!validNickName(player, nickName)) {
             return true;
         }
@@ -87,6 +87,10 @@ public class NickCommand implements CommandExecutor {
     }
 
     private boolean validNickName(Player player, String nickName) {
+        if (!Config.namePattern.matcher(nickName).matches()) {
+            player.sendMessage(Messages.NICK_FAIL_CONTAINS_SPECIAL_CHAR_MESSAGE);
+            return false;
+        }
         if (nickName.length() < Config.nickMinLength) {
             player.sendMessage(Messages.NICK_FAIL_TOO_SHORT);
             return false;
@@ -95,12 +99,17 @@ public class NickCommand implements CommandExecutor {
             player.sendMessage(Messages.NICK_FAIL_TOO_LONG);
             return false;
         }
+        // 如果nickName包含玩家名字
         if (nickName.equals(player.getName())) {
-            player.sendMessage(Messages.NICK_FAIL_AS_SELF_MESSAGE);
-            return false;
+            // 如果玩家没有匿名
+            if (!API.isPlayerNicked(player)) {
+                player.sendMessage(Messages.NICK_FAIL_AS_SELF_MESSAGE);
+                return false;
+            }
         }
-        if (!Config.namePattern.matcher(nickName).matches()) {
-            player.sendMessage(Messages.NICK_FAIL_CONTAINS_SPECIAL_CHAR_MESSAGE);
+        if (API.getPlayerNameOnline(player).equals(nickName)) {
+            // 如果玩家匿名了, 使用lib自带的查询要nickname的名字是否是真实名字
+            player.sendMessage(Messages.NICK_FAIL_AS_SELF_MESSAGE);
             return false;
         }
         return true;

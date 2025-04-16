@@ -15,7 +15,7 @@ public class PlayerQuitListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if (!API.isPlayerNicked(player.getUniqueId())) return;
+        if (!API.isPlayerNickedDataBase(player.getUniqueId())) return;
 
         PlayerUnNickEvent playerUnNickEvent = new PlayerUnNickEvent(player, false);
         Bukkit.getPluginManager().callEvent(playerUnNickEvent);

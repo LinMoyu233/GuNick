@@ -45,7 +45,7 @@ public class PlayerJoinListener implements Listener {
         // 如果玩家没有匿名, 不执行逻辑
         if (Config.isJoinNickAsyncAndReplaceMessage) {
             Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
-                if (!API.isPlayerNicked(player.getUniqueId())) return;
+                if (!API.isPlayerNickedDataBase(player.getUniqueId())) return;
 
                 // 大厅逻辑
                 if (Config.isLobby) {
@@ -57,7 +57,7 @@ public class PlayerJoinListener implements Listener {
                 callNickEvent(player);
             });
         } else {
-            if (!API.isPlayerNicked(player.getUniqueId())) return;
+            if (!API.isPlayerNickedDataBase(player.getUniqueId())) return;
 
             // 大厅逻辑
             if (Config.isLobby) {

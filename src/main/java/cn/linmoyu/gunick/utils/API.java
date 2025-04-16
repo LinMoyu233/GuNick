@@ -9,9 +9,17 @@ import java.util.UUID;
 
 public class API {
 
-    public static boolean isPlayerNicked(UUID uuid) {
+    public static boolean isPlayerNickedDataBase(UUID uuid) {
         String nickName = getPlayerNick(uuid);
         return nickName != null && !nickName.isEmpty();
+    }
+
+    public static boolean isPlayerNicked(Player player) {
+        return GuNick.getPlugin().getDisguiseProvider().isDisguised(player);
+    }
+
+    public static String getPlayerNameOnline(Player player) {
+        return GuNick.getPlugin().getDisguiseProvider().getInfo(player).getName();
     }
 
     public static String getPlayerNick(UUID uuid) {
