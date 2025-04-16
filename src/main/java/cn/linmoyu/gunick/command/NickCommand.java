@@ -37,12 +37,21 @@ public class NickCommand implements CommandExecutor {
             return true;
         }
 
+        if (Config.bookGui) {
+            player.performCommand("nickbookgui");
+            return true;
+        }
+
         if (args.length < 1) {
             player.sendMessage(Messages.NICK_COMMAND_USE_USAGE_MAIN_MESSAGE);
             return true;
         }
 
         String nickName = args[0];
+        if (nickName.equalsIgnoreCase("reset")) {
+            player.performCommand("unnick");
+            return true;
+        }
         if (!validNickName(player, nickName)) {
             return true;
         }
@@ -98,8 +107,8 @@ public class NickCommand implements CommandExecutor {
     }
 
     private String[] processPrefixAndSuffix(String[] args) {
-        String prefix = args.length >= 2 ? Messages.translate(args[1]) : "";
-        String suffix = args.length >= 3 ? Messages.translate(args[2]) : "";
+        String prefix = args.length >= 2 ? Messages.translateCC(args[1]) : "";
+        String suffix = args.length >= 3 ? Messages.translateCC(args[2]) : "";
         return new String[]{prefix, suffix};
     }
 

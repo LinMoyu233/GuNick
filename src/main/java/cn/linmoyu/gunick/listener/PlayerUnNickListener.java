@@ -31,7 +31,7 @@ public class PlayerUnNickListener implements Listener {
                 break;
             default:
                 event.setCancelled(true);
-                player.sendMessage(Messages.translate("&c在当前子服对你取消匿名时出错. 上报管理员时请提供以下错误, 并附带所在模式或大厅: " + response + ". (v" + version + ")"));
+                player.sendMessage(Messages.translateCC("&c在当前子服对你取消匿名时出错. 上报管理员时请提供以下错误, 并附带所在模式或大厅: " + response + ". (v" + version + ")"));
                 break;
         }
     }

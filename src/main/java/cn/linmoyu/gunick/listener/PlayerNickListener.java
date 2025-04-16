@@ -34,15 +34,15 @@ public class PlayerNickListener implements Listener {
                 break;
             case FAIL_NAME_TOO_LONG:
                 event.setCancelled(true);
-                player.sendMessage(Messages.translate(Messages.NICK_FAIL_TOO_LONG + " (v" + version + ")"));
+                player.sendMessage(Messages.translateCC(Messages.NICK_FAIL_TOO_LONG + " (v" + version + ")"));
                 break;
             case FAIL_NAME_ALREADY_ONLINE:
                 event.setCancelled(true);
-                player.sendMessage(Messages.translate(Messages.NICK_FAIL_PLAYER_NAME_KNOWN_MESSAGE + " (v" + version + ")"));
+                player.sendMessage(Messages.translateCC(Messages.NICK_FAIL_PLAYER_NAME_KNOWN_MESSAGE + " (v" + version + ")"));
                 break;
             default:
                 event.setCancelled(true);
-                player.sendMessage(Messages.translate("&c在当前子服对你匿名时出错. 上报管理员时请提供以下错误, 并附带所在模式或大厅: " + response + ". (v" + version + ")"));
+                player.sendMessage(Messages.translateCC("&c在当前子服对你匿名时出错. 上报管理员时请提供以下错误, 并附带所在模式或大厅: " + response + ". (v" + version + ")"));
                 break;
         }
     }

@@ -8,4 +8,15 @@ database:
 
 lobbyMode: autodetect
 # true, false, autodetect
-# AutoDetect Only Support: SuperLobby, DeluxeHub, Akropolis
+# AutoDetect 仅检测以下插件SuperLobby, DeluxeHub, Akropolis
+
+# 加入服务器时获取昵称是否异步查询
+# 可能防止服务器卡顿? 但是得看Tab更新玩家列表, 如果加入后不更新不建议打开, 会白名.
+# 垃圾代码, 蹲个大佬佬改进QAQ
+isJoinNickAsyncAndReplaceMessage: false
+# 加入消息的延迟(如使用第一个功能必须)
+joinMessageDelay: 5
+# 加入消息包含字符(如使用第一个功能必须)
+joinMessageContain: "加入了游戏"
+
+bookGui: true

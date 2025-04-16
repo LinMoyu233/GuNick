@@ -17,6 +17,10 @@ public class Config {
     public static boolean mysql_ssl;
     public static boolean isLobby;
     public static String lobbyMode;
+    public static boolean isJoinNickAsyncAndReplaceMessage;
+    public static int joinMessageDelay;
+    public static String joinMessageContain;
+    public static boolean bookGui;
 
     public static int nickMinLength = 3;
     public static int nickLength = 16;
@@ -37,6 +41,11 @@ public class Config {
         if (lobbyMode.equalsIgnoreCase("true") || lobbyMode.equalsIgnoreCase("autodetect")) {
             detectLobby();
         }
+        isJoinNickAsyncAndReplaceMessage = config.getBoolean("isJoinNickAsyncAndReplaceMessage");
+        joinMessageDelay = config.getInt("joinMessageDelay");
+        joinMessageContain = config.getString("joinMessageContain");
+        bookGui = config.getBoolean("bookGui");
+
     }
 
     public static void reloadConfig(Plugin plugin) {

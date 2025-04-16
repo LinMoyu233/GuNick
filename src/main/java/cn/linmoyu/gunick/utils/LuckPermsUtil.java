@@ -84,7 +84,7 @@ public final class LuckPermsUtil {
 //        String prefix = user.getCachedData().getMetaData().getPrefix();
 //        if (prefix == null) return "";
 //
-//        return Messages.translate(prefix);
+//        return Messages.translateCC(prefix);
 //    }
 //
 //    public static String getSuffix(Player player) {
@@ -93,7 +93,7 @@ public final class LuckPermsUtil {
 //        String suffix = user.getCachedData().getMetaData().getSuffix();
 //        if (suffix == null) return "";
 //
-//        return Messages.translate(suffix);
+//        return Messages.translateCC(suffix);
 //    }
 
 //    private static User getUser(Player player) {
