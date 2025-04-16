@@ -31,7 +31,7 @@ public class ChatPacketListener extends PacketAdapter {
         PacketContainer originalPacket = e.getPacket();
         WrappedChatComponent originalChat = originalPacket.getChatComponents().read(0);
         String originalJson = originalChat.getJson();
-        if (!originalJson.contains(Config.joinMessageContain)) return;
+        if (!originalJson.contains(Config.joinMessageContainChar)) return;
 
         e.setCancelled(true);
 

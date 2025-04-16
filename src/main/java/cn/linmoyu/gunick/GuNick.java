@@ -58,9 +58,11 @@ public final class GuNick extends JavaPlugin {
             ProtocolLibrary.getProtocolManager().addPacketListener(new ChatPacketListener(this));
         }
 
-        getCommand("nick").setExecutor(new NickCommand());
-        getCommand("unnick").setExecutor(new UnNickCommand());
-        getCommand("nickbookgui").setExecutor(new NickBookGuiCommand());
+        if (Config.isLobby || Config.forceNickOnGame) {
+            getCommand("nick").setExecutor(new NickCommand());
+            getCommand("unnick").setExecutor(new UnNickCommand());
+            getCommand("nickbookgui").setExecutor(new NickBookGuiCommand());
+        }
 
         DisguiseManager.initialize(this, false);
     }

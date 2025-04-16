@@ -15,11 +15,14 @@ public class Config {
     public static String mysql_user;
     public static String mysql_password;
     public static boolean mysql_ssl;
+
     public static boolean isLobby;
     public static String lobbyMode;
+    public static boolean forceNickOnGame;
+
     public static boolean isJoinNickAsyncAndReplaceMessage;
     public static int joinMessageDelay;
-    public static String joinMessageContain;
+    public static String joinMessageContainChar;
     public static boolean bookGui;
 
     public static int nickMinLength = 3;
@@ -41,9 +44,12 @@ public class Config {
         if (lobbyMode.equalsIgnoreCase("true") || lobbyMode.equalsIgnoreCase("autodetect")) {
             detectLobby();
         }
-        isJoinNickAsyncAndReplaceMessage = config.getBoolean("isJoinNickAsyncAndReplaceMessage");
+        forceNickOnGame = config.getBoolean("forceNickOnGame");
+
+        isJoinNickAsyncAndReplaceMessage = config.getBoolean("joinNickAsyncAndReplaceMessage");
         joinMessageDelay = config.getInt("joinMessageDelay");
-        joinMessageContain = config.getString("joinMessageContain");
+        joinMessageContainChar = config.getString("joinMessageContainChar");
+
         bookGui = config.getBoolean("bookGui");
 
     }

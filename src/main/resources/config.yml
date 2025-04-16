@@ -1,3 +1,4 @@
+# 垃圾代码, 蹲个大佬佬提PR改进QAQ
 database:
   host: localhost
   port: 3306
@@ -6,17 +7,26 @@ database:
   password: password
   ssl: false
 
+# 不推荐在游戏中热匿名, 看接管Tab的游戏插件会不会更新PlayerList.
+# 如果加入后PlayerList不会更新不建议打开, 会导致白名.
+# 因此, 非lobbyMode时会默认屏蔽匿名指令
+# 类型: true false autodetect
+# AutoDetect 仅检测以下插件: SuperLobby, DeluxeHub, Akropolis
 lobbyMode: autodetect
-# true, false, autodetect
-# AutoDetect 仅检测以下插件SuperLobby, DeluxeHub, Akropolis
+# 当然. 你要是不听劝, 想在游戏中匿名, 可以修改这个
+forceNickOnGame: false
 
-# 加入服务器时获取昵称是否异步查询
-# 可能防止服务器卡顿? 但是得看Tab更新玩家列表, 如果加入后不更新不建议打开, 会白名.
-# 垃圾代码, 蹲个大佬佬改进QAQ
-isJoinNickAsyncAndReplaceMessage: false
-# 加入消息的延迟(如使用第一个功能必须)
+# 加入服务器时获取匿名是否异步查询
+# 可能防止服务器卡顿? 热匿名.
+# 因异步数据库查询会延迟导致热匿名, joinMessage可能没有办法很好接管
+# 如果使用将会依赖"ProtocolLib"拦截包含"joinMessageContainChar"里的消息
+# 并在"joinMessageDelay"后发送该替换该玩家原始名称为匿名消息后再发送
+# 发送的消息会带有Meta "GuNick"(必须, 否则死循环)
+joinNickAsyncAndReplaceMessage: false
+# 加入消息包含字符， 不支持多条(如使用第一个功能必须开启)
+joinMessageContainChar: "加入了游戏"
+# 加入消息的延迟(单位tick, 如使用第一个功能必须开启)
 joinMessageDelay: 5
-# 加入消息包含字符(如使用第一个功能必须)
-joinMessageContain: "加入了游戏"
 
+# 是否使用书本和牌子GUI
 bookGui: true
