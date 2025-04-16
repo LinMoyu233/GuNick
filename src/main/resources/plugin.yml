@@ -6,3 +6,4 @@ softdepend: [ ProtocolLib ]
 commands:
   nick:
   unnick:
+  nickbookgui:
