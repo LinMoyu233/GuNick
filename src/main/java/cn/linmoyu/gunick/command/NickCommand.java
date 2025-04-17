@@ -20,20 +20,16 @@ public class NickCommand implements CommandExecutor {
             sender.sendMessage(Messages.NICK_COMMAND_PLAYER_ONLY_MESSAGE);
             return true;
         }
+        if (!Config.isLobby && !Config.forceNickCommandOnGame) {
+            sender.sendMessage(Messages.NICK_COMMAND_ONLY_LOBBY_MESSAGE);
+            return true;
+        }
 
         Player player = (Player) sender;
 
         // 权限校验
         if (!player.hasPermission(Permissions.NICK_USE_PERMISSION)) {
             player.sendMessage(Messages.NICK_COMMAND_NO_PERMISSION_MESSAGE);
-            return true;
-        }
-
-        // 如果Nick的玩家名为reload, 且有重载权限
-        if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-            if (!player.hasPermission(Permissions.NICK_ADMIN_RELOAD_PERMISSION)) return true;
-            Config.reloadConfig(GuNick.getPlugin());
-            player.sendMessage(Messages.NICK_RELOAD_MESSAGE);
             return true;
         }
 
@@ -47,7 +43,7 @@ public class NickCommand implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            player.sendMessage(Messages.NICK_COMMAND_USE_USAGE_MAIN_MESSAGE);
+            player.sendMessage(Messages.NICK_COMMAND_USAGE_MAIN_MESSAGE);
             return true;
         }
 
@@ -55,7 +51,7 @@ public class NickCommand implements CommandExecutor {
         if (!validNickName(player, nickName)) {
             return true;
         }
-        String playerName = player.getName(); // 需要提前缓存playerName, 否则后续存储的还是nick名字
+        String playerName = API.getPlayerName(player);
 
         // 处理需要匿名的前缀后缀
         String[] prefixSuffix = processPrefixAndSuffix(args);
@@ -64,7 +60,6 @@ public class NickCommand implements CommandExecutor {
 
         // 大厅处理
         if (Config.isLobby) {
-            Messages.handleLobbyActionBar(player);
             // 如果玩家不能在大厅匿名 直接保存数据返回
             if (!player.hasPermission(Permissions.NICK_ON_LOBBY_PERMISSION)) {
                 saveNickData(player, playerName, nickName, nickedPrefix, nickedSuffix);
@@ -82,7 +77,8 @@ public class NickCommand implements CommandExecutor {
         // 保存数据
         saveNickData(player, playerName, nickName, nickedPrefix, nickedSuffix);
 
-        player.sendMessage(Messages.NICK_SUCESSFUL_MESSAGE);
+        player.sendMessage(Messages.NICK_SUCCESSFUL_MESSAGE);
+
         return true;
     }
 
@@ -92,11 +88,11 @@ public class NickCommand implements CommandExecutor {
             return false;
         }
         if (nickName.length() < Config.nickMinLength) {
-            player.sendMessage(Messages.NICK_FAIL_TOO_SHORT);
+            player.sendMessage(Messages.NICK_FAIL_TOO_SHORT_MESSAGE);
             return false;
         }
         if (nickName.length() > Config.nickLength) {
-            player.sendMessage(Messages.NICK_FAIL_TOO_LONG);
+            player.sendMessage(Messages.NICK_FAIL_TOO_LONG_MESSAGE);
             return false;
         }
         // 如果nickName包含玩家名字
@@ -107,7 +103,7 @@ public class NickCommand implements CommandExecutor {
                 return false;
             }
         }
-        if (API.getPlayerNameOnline(player).equals(nickName)) {
+        if (API.getPlayerName(player).equals(nickName)) {
             // 如果玩家匿名了, 使用lib自带的查询要nickname的名字是否是真实名字
             player.sendMessage(Messages.NICK_FAIL_AS_SELF_MESSAGE);
             return false;

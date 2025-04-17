@@ -18,7 +18,7 @@ public class API {
         return GuNick.getPlugin().getDisguiseProvider().isDisguised(player);
     }
 
-    public static String getPlayerNameOnline(Player player) {
+    public static String getPlayerName(Player player) {
         return GuNick.getPlugin().getDisguiseProvider().getInfo(player).getName();
     }
 
@@ -26,7 +26,7 @@ public class API {
         return GuNick.getRemoteDatabase().getPlayerNick(uuid);
     }
 
-    public static String getPlayerName(UUID uuid) {
+    public static String getPlayerNameFromDatabase(UUID uuid) {
         return GuNick.getRemoteDatabase().getPlayerName(uuid);
     }
 

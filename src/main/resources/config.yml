@@ -13,20 +13,58 @@ database:
 # 类型: true false autodetect
 # AutoDetect 仅检测以下插件: SuperLobby, DeluxeHub, Akropolis
 lobbyMode: autodetect
-# 当然. 你要是不听劝, 想在游戏中匿名, 可以修改这个
-forceNickOnGame: false
+# 当然. 你要是不听劝, 想在游戏中匿名, 启用修改这个
+forceNickCommandOnGame:
+  enable: false
+  # 不启用功能, 则提示玩家
+  deniedMessage: "&c你只能在大厅使用该命令."
 
 # 加入服务器时获取匿名是否异步查询
-# 可能防止服务器卡顿? 热匿名.
-# 因异步数据库查询会延迟导致热匿名, joinMessage可能没有办法很好接管
-# 如果使用将会依赖"ProtocolLib"拦截包含"joinMessageContainChar"里的消息
-# 并在"joinMessageDelay"后发送该替换该玩家原始名称为匿名消息后再发送
+# 可能防止服务器卡顿?
+# 异步数据库查询会延迟导致热匿名, 因此joinMessage可能没有办法很好接管
+# 如果使用该功能, 将会依赖"ProtocolLib"拦截包含"joinMessageContainChar"里的消息
+# 并在"joinMessageDelay"后发送消息中的原始名称为匿名后再发送消息
 # 发送的消息会带有Meta "GuNick"(必须, 否则死循环)
 joinNickAsyncAndReplaceMessage: false
-# 加入消息包含字符， 不支持多条(如使用第一个功能必须开启)
+# 加入消息包含字符, 不支持多条(如使用第一个功能必须开启)
 joinMessageContainChar: "加入了游戏"
 # 加入消息的延迟(单位tick, 如使用第一个功能必须开启)
 joinMessageDelay: 5
 
-# 是否使用书本和牌子GUI
+# 是否在/nick上使用书本和牌子GUI
+# 默认也会注册/nickbookgui, 开启此项后使用/nick即执行/nickbookgui
 bookGui: true
+
+# 是否启用ActionBar
+actionbar:
+  enable: true
+  # 是否启用单独的隐身ActionBar
+  # 需要匿名权限, 且玩家需要带有Meta "vanished"进行识别.
+  vanishbar: true
+
+messages:
+  no_permission: "&c你没有使用该命令的权限!"
+  player_only: "&c只有玩家才能使用该命令."
+  usage_prefix: "&c用法: "
+  # = usage_prefix + usage_main
+  usage_main: "&c/nick [匿名] <前缀> <后缀>"
+  
+  actionbar_in_nick: "&f你目前&c已匿名"
+  # = actionbar_in_nick + actionbar_in_nick_append_only_game
+  actionbar_in_nick_append_only_game: "(仅游戏)"
+  # = action_bar_in_nick + actionbar_in_nick_append_only_game + actionbar_in_nick_append_invis
+  actionbar_in_nick_append_invis: "&f, &c已隐身"
+  # only invis
+  actionbar_in_invis: "&f你目前&c已隐身"
+  
+  nick_successful: "&a你已完成昵称设置!"
+  unnick_successful: "&a你的昵称已经重置!"
+  
+  nick_fail_as_self: "&c你不能设置与自己一样的昵称!"
+  nick_fail_too_short: "&c你不能设置少于&e3&c个字符的昵称."
+  nick_fail_too_long: "&c你不能设置多于&e16&c个字符的昵称."
+  # 直接拼接到最后了, 有点懒得写Orz
+  nick_fail_contains_special_char: "&c你只能设置带有这些符号的昵称: "
+  nick_fail_player_name_known_message: "&c你设置的昵称与某玩家相同, 请选择其他昵称!"
+  
+  unnick_fail_already: "&c你还没有设置昵称."

@@ -106,9 +106,9 @@ public class MySQL implements Database {
 
     @Override
     public void setPlayerNick(UUID uuid, String playerName, String nickname, String prefix, String suffix, String nickedPrefix, String nickedSuffix) {
-        if (!API.getPlayerNick(uuid).isEmpty()) {
-            playerName = API.getPlayerName(uuid);
-        }
+//        if (!API.getPlayerNick(uuid).isEmpty()) {
+//            playerName = API.getPlayerNameFromDatabase(uuid);
+//        }
         if (!API.getPlayerPrefix(uuid).isEmpty()) {
             prefix = API.getPlayerPrefix(uuid);
         }
