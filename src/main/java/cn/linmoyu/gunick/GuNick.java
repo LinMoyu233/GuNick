@@ -15,13 +15,14 @@ import dev.iiahmed.disguise.DisguiseManager;
 import dev.iiahmed.disguise.DisguiseProvider;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 
 @Getter
-public final class GuNick extends JavaPlugin {
+public final class GuNick extends JavaPlugin implements Listener {
     @Getter
     private static GuNick plugin;
     @Getter
@@ -54,15 +55,14 @@ public final class GuNick extends JavaPlugin {
         pluginManager.registerEvents(new PlayerNickListener(), this);
         pluginManager.registerEvents(new PlayerQuitListener(), this);
         pluginManager.registerEvents(new PlayerUnNickListener(), this);
+        pluginManager.registerEvents(new PlayerCommandListener(), this);
         if (pluginManager.isPluginEnabled("ProtocolLib")) {
             ProtocolLibrary.getProtocolManager().addPacketListener(new ChatPacketListener(this));
         }
 
-        if (Config.isLobby || Config.forceNickOnGame) {
-            getCommand("nick").setExecutor(new NickCommand());
-            getCommand("unnick").setExecutor(new UnNickCommand());
-            getCommand("nickbookgui").setExecutor(new NickBookGuiCommand());
-        }
+        getCommand("nick").setExecutor(new NickCommand());
+        getCommand("unnick").setExecutor(new UnNickCommand());
+        getCommand("nickbookgui").setExecutor(new NickBookGuiCommand());
 
         DisguiseManager.initialize(this, false);
     }

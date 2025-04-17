@@ -42,8 +42,6 @@ public class ChatPacketListener extends PacketAdapter {
 
             String modifiedJson = originalJson;
             for (Map.Entry<String, String> entry : GuNick.getNickPlayersName().entrySet()) {
-                System.out.println(entry.getKey());
-                System.out.println(entry.getValue());
                 modifiedJson = modifiedJson.replace(entry.getKey(), entry.getValue());
             }
 

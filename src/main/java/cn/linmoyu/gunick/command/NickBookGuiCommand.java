@@ -31,6 +31,10 @@ public class NickBookGuiCommand implements CommandExecutor {
             sender.sendMessage(Messages.NICK_COMMAND_PLAYER_ONLY_MESSAGE);
             return true;
         }
+        if (!Config.isLobby && !Config.forceNickCommandOnGame) {
+            sender.sendMessage(Messages.NICK_COMMAND_ONLY_LOBBY_MESSAGE);
+            return true;
+        }
 
         Player player = (Player) sender;
 
@@ -44,7 +48,7 @@ public class NickBookGuiCommand implements CommandExecutor {
         // 第1步: 阅读提示 填充arg[0]
         if (args.length == 0) {
             Book book = new Book();
-            TextComponent text = new TextComponent(Messages.translateCC("&0设置匿名将允许你使用不同的用户名进行游戏, 以避免被他人认出.\n\n所有规则仍然适用. 你仍然可以被人工举报并且所有的匿名将会被记录."));
+            TextComponent text = new TextComponent(Messages.translateCC("&0设置匿名将允许你使用不同的用户名进行游戏, 以避免被他人认出.\n\n所有规则仍然适用, 你仍可以被人工举报并且所有的匿名将会被记录."));
             TextComponent iknow = new TextComponent(Messages.translateCC("\n\n&0➤ &n我已知晓, &n开始设置匿名."));
             iknow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/nickbookgui iknow"));
             iknow.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("点此开始").create()));
@@ -145,7 +149,7 @@ public class NickBookGuiCommand implements CommandExecutor {
         if (args.length >= 4 && args[0].equals("iknow") && args[2].equals("nameInvaild")) {
             Book book = new Book();
             String deniedReason = String.join(" ", Arrays.copyOfRange(args, 3, args.length));
-            TextComponent text = new TextComponent(Messages.translateCC("&c&l你的昵称有些问题, &c&l请更换后重试:\n" + deniedReason + "\n\n现在, 请选择你要使用的&0&l昵称!\n\n"));
+            TextComponent text = new TextComponent(Messages.translateCC("&c&l你的昵称有些问题, &c&l请更换后重试:\n" + deniedReason + "\n\n现在, 请选择你要使用的&0&l昵称&0!\n\n"));
 
             TextComponent inputNick = new TextComponent(Messages.translateCC("&0➤ &0输入昵称\n"));
             inputNick.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/nickbookgui iknow " + args[1] + " input"));
@@ -186,7 +190,7 @@ public class NickBookGuiCommand implements CommandExecutor {
 //        // 保存数据
 //        saveNickData(player, playerName, nickName, nickedPrefix, nickedSuffix);
 //
-//        player.sendMessage(Messages.NICK_SUCESSFUL_MESSAGE);
+//        player.sendMessage(Messages.NICK_SUCCESSFUL_MESSAGE);
 //        return true;
         return true;
     }
@@ -196,10 +200,10 @@ public class NickBookGuiCommand implements CommandExecutor {
             return (Messages.NICK_FAIL_CONTAINS_SPECIAL_CHAR_MESSAGE);
         }
         if (nickName.length() < Config.nickMinLength) {
-            return (Messages.NICK_FAIL_TOO_SHORT);
+            return (Messages.NICK_FAIL_TOO_SHORT_MESSAGE);
         }
         if (nickName.length() > Config.nickLength) {
-            return (Messages.NICK_FAIL_TOO_LONG);
+            return (Messages.NICK_FAIL_TOO_LONG_MESSAGE);
         }
         // 如果nickName包含玩家名字
         if (nickName.equals(player.getName())) {
@@ -209,7 +213,7 @@ public class NickBookGuiCommand implements CommandExecutor {
             }
         }
         // 如果玩家匿名了, 使用lib自带的查询要nickname的名字是否是真实名字
-        if (API.getPlayerNameOnline(player).equals(nickName)) {
+        if (API.getPlayerName(player).equals(nickName)) {
             return (Messages.NICK_FAIL_AS_SELF_MESSAGE);
         }
         return "";

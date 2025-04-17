@@ -20,6 +20,10 @@ public class UnNickCommand implements CommandExecutor {
             sender.sendMessage(Messages.NICK_COMMAND_PLAYER_ONLY_MESSAGE);
             return true;
         }
+        if (!Config.isLobby && !Config.forceNickCommandOnGame) {
+            sender.sendMessage(Messages.NICK_COMMAND_ONLY_LOBBY_MESSAGE);
+            return true;
+        }
 
         // 获取玩家
         Player player = (Player) sender;
@@ -31,7 +35,6 @@ public class UnNickCommand implements CommandExecutor {
 
         // 大厅处理
         if (Config.isLobby) {
-            Messages.handleCancelLobbyActionBar(player);
             // 如果玩家不能在大厅匿名 直接保存数据返回
             if (!player.hasPermission(Permissions.NICK_ON_LOBBY_PERMISSION)) {
                 Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
@@ -40,7 +43,7 @@ public class UnNickCommand implements CommandExecutor {
                         return;
                     }
                     removeNickData(player);
-                    player.sendMessage(Messages.UNNICK_SUCESSFUL_MESSAGE);
+                    player.sendMessage(Messages.UNNICK_SUCCESSFUL_MESSAGE);
                 });
                 return true;
             }

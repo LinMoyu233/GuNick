@@ -23,7 +23,7 @@ public class PlayerUnNickListener implements Listener {
                 if (event.needRefresh()) GuNick.getPlugin().getDisguiseProvider().refreshAsPlayer(player);
                 player.setDisplayName(player.getName());
                 GuNick.getNickPlayersName().remove(player.getName());
-                player.sendMessage(Messages.UNNICK_SUCESSFUL_MESSAGE);
+                player.sendMessage(Messages.UNNICK_SUCCESSFUL_MESSAGE);
                 break;
             case FAIL_ALREADY_UNDISGUISED:
                 event.setCancelled(true);

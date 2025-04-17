@@ -9,6 +9,7 @@ import org.bukkit.plugin.PluginManager;
 import java.util.regex.Pattern;
 
 public class Config {
+
     public static String mysql_host;
     public static int mysql_port;
     public static String mysql_database;
@@ -18,12 +19,15 @@ public class Config {
 
     public static boolean isLobby;
     public static String lobbyMode;
-    public static boolean forceNickOnGame;
+    public static boolean forceNickCommandOnGame;
 
     public static boolean isJoinNickAsyncAndReplaceMessage;
     public static int joinMessageDelay;
     public static String joinMessageContainChar;
     public static boolean bookGui;
+
+    public static boolean actionbar_enable;
+    public static boolean actionbar_vanishbar;
 
     public static int nickMinLength = 3;
     public static int nickLength = 16;
@@ -44,7 +48,7 @@ public class Config {
         if (lobbyMode.equalsIgnoreCase("true") || lobbyMode.equalsIgnoreCase("autodetect")) {
             detectLobby();
         }
-        forceNickOnGame = config.getBoolean("forceNickOnGame");
+        forceNickCommandOnGame = config.getBoolean("forceNickCommandOnGame.enable");
 
         isJoinNickAsyncAndReplaceMessage = config.getBoolean("joinNickAsyncAndReplaceMessage");
         joinMessageDelay = config.getInt("joinMessageDelay");
@@ -52,10 +56,15 @@ public class Config {
 
         bookGui = config.getBoolean("bookGui");
 
+        actionbar_enable = config.getBoolean("actionbar.enable");
+        actionbar_vanishbar = config.getBoolean("actionbar.vanishbar");
+
+        Messages.loadMessages(config);
     }
 
     public static void reloadConfig(Plugin plugin) {
         plugin.reloadConfig();
+        setupConfig(plugin);
 
         GuNick.getRemoteDatabase().close();
         GuNick.getPlugin().connectDatabase();
