@@ -1,16 +1,17 @@
 package cn.linmoyu.gunick;
 
-import cn.linmoyu.gunick.command.NickBookGuiCommand;
+//import cn.linmoyu.gunick.command.NickBookGuiCommand;
+
 import cn.linmoyu.gunick.command.NickCommand;
 import cn.linmoyu.gunick.command.UnNickCommand;
 import cn.linmoyu.gunick.database.Database;
 import cn.linmoyu.gunick.database.MySQL;
+import cn.linmoyu.gunick.database.PlayerData;
 import cn.linmoyu.gunick.listener.*;
 import cn.linmoyu.gunick.nms.VersionSupport;
 import cn.linmoyu.gunick.nms.v1_8;
 import cn.linmoyu.gunick.utils.Config;
 import cn.linmoyu.gunick.utils.Messages;
-import com.comphenix.protocol.ProtocolLibrary;
 import dev.iiahmed.disguise.DisguiseManager;
 import dev.iiahmed.disguise.DisguiseProvider;
 import lombok.Getter;
@@ -19,7 +20,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 public final class GuNick extends JavaPlugin implements Listener {
@@ -30,9 +32,9 @@ public final class GuNick extends JavaPlugin implements Listener {
     @Getter
     private static Database remoteDatabase;
     @Getter
-    private static HashMap<String, String> nickPlayersName = new HashMap<>();
-    @Getter
     private DisguiseProvider disguiseProvider = DisguiseManager.getProvider();
+    @Getter
+    private ConcurrentHashMap<UUID, PlayerData> dataCache = new ConcurrentHashMap<>();
 
     public GuNick() {
         disguiseProvider.allowOverrideChat(false);
@@ -56,13 +58,10 @@ public final class GuNick extends JavaPlugin implements Listener {
         pluginManager.registerEvents(new PlayerQuitListener(), this);
         pluginManager.registerEvents(new PlayerUnNickListener(), this);
         pluginManager.registerEvents(new PlayerCommandListener(), this);
-        if (pluginManager.isPluginEnabled("ProtocolLib")) {
-            ProtocolLibrary.getProtocolManager().addPacketListener(new ChatPacketListener(this));
-        }
 
         getCommand("nick").setExecutor(new NickCommand());
         getCommand("unnick").setExecutor(new UnNickCommand());
-        getCommand("nickbookgui").setExecutor(new NickBookGuiCommand());
+//        getCommand("nickbookgui").setExecutor(new NickBookGuiCommand());
 
         DisguiseManager.initialize(this, false);
     }

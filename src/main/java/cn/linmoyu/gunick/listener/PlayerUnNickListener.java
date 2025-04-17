@@ -2,6 +2,7 @@ package cn.linmoyu.gunick.listener;
 
 import cn.linmoyu.gunick.GuNick;
 import cn.linmoyu.gunick.event.PlayerUnNickEvent;
+import cn.linmoyu.gunick.utils.API;
 import cn.linmoyu.gunick.utils.Messages;
 import dev.iiahmed.disguise.UndisguiseResponse;
 import org.bukkit.entity.Player;
@@ -21,8 +22,7 @@ public class PlayerUnNickListener implements Listener {
         switch (response) {
             case SUCCESS:
                 if (event.needRefresh()) GuNick.getPlugin().getDisguiseProvider().refreshAsPlayer(player);
-                player.setDisplayName(player.getName());
-                GuNick.getNickPlayersName().remove(player.getName());
+                player.setDisplayName(API.getPlayerName(player));
                 player.sendMessage(Messages.UNNICK_SUCCESSFUL_MESSAGE);
                 break;
             case FAIL_ALREADY_UNDISGUISED:

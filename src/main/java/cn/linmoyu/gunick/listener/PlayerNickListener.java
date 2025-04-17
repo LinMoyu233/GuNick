@@ -17,7 +17,6 @@ public class PlayerNickListener implements Listener {
 
         Player player = event.getPlayer();
         String nickName = event.getNickName();
-        String playerName = event.getPlayerName();
         Disguise disguise = Disguise.builder()
                 .setName(nickName)
                 .build();
@@ -26,11 +25,6 @@ public class PlayerNickListener implements Listener {
         switch (response) {
             case SUCCESS:
                 if (event.needRefresh()) GuNick.getPlugin().getDisguiseProvider().refreshAsPlayer(player);
-                if (GuNick.getNickPlayersName().containsKey(playerName)) {
-                    GuNick.getNickPlayersName().replace(playerName, nickName);
-                } else {
-                    GuNick.getNickPlayersName().put(playerName, nickName);
-                }
                 player.setDisplayName(nickName);
                 break;
             case FAIL_NAME_INVALID:

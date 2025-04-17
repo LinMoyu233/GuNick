@@ -1,6 +1,7 @@
 package cn.linmoyu.gunick.command;
 
 import cn.linmoyu.gunick.GuNick;
+import cn.linmoyu.gunick.database.PlayerData;
 import cn.linmoyu.gunick.event.PlayerUnNickEvent;
 import cn.linmoyu.gunick.utils.*;
 import org.bukkit.Bukkit;
@@ -34,20 +35,18 @@ public class UnNickCommand implements CommandExecutor {
         }
 
         // 大厅处理
-        if (Config.isLobby) {
-            // 如果玩家不能在大厅匿名 直接保存数据返回
-            if (!player.hasPermission(Permissions.NICK_ON_LOBBY_PERMISSION)) {
-                Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
-                    if (!API.isPlayerNickedDataBase(player.getUniqueId())) {
-                        player.sendMessage(Messages.UNNICK_FAIL_ALREADY_MESSAGE);
-                        return;
-                    }
-                    removeNickData(player);
-                    player.sendMessage(Messages.UNNICK_SUCCESSFUL_MESSAGE);
-                });
-                return true;
-            }
+        if (Config.isLobby && !player.hasPermission(Permissions.NICK_ON_LOBBY_PERMISSION)) {
+            Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
+                if (!API.isPlayerDataNicked(player)) {
+                    player.sendMessage(Messages.UNNICK_FAIL_ALREADY_MESSAGE);
+                    return;
+                }
+                removeNickData(player);
+                player.sendMessage(Messages.UNNICK_SUCCESSFUL_MESSAGE);
+            });
+            return true;
         }
+
         PlayerUnNickEvent playerUnNickEvent = new PlayerUnNickEvent(player, true);
         Bukkit.getPluginManager().callEvent(playerUnNickEvent);
         // 如果事件没有被取消, 则移除数据库里的Nick?
@@ -58,13 +57,13 @@ public class UnNickCommand implements CommandExecutor {
     }
 
     public void removeNickData(Player player) {
-        Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
-            UUID uuid = player.getUniqueId();
-            String prefix = API.getPlayerPrefix(uuid);
-            String suffix = API.getPlayerSuffix(uuid);
-            if (!prefix.isEmpty()) LuckPermsUtil.setPrefix(uuid, prefix);
-            if (!suffix.isEmpty()) LuckPermsUtil.setSuffix(uuid, suffix);
-            API.deletePlayerNickFromDatabase(uuid);
-        });
+        UUID playerUUID = player.getUniqueId();
+        PlayerData playerData = GuNick.getPlugin().getDataCache().get(playerUUID);
+        if (playerData == null) return;
+        String prefix = playerData.getPrefix();
+        String suffix = playerData.getSuffix();
+        if (!prefix.isEmpty()) LuckPermsUtil.setPrefix(playerUUID, prefix);
+        if (!suffix.isEmpty()) LuckPermsUtil.setSuffix(playerUUID, suffix);
+        API.deletePlayerNickFromDatabase(playerUUID);
     }
 }

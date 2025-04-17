@@ -15,13 +15,16 @@ public class PlayerQuitListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if (!API.isPlayerNickedDataBase(player.getUniqueId())) return;
+        if (!API.isPlayerDataNicked(player)) return;
 
         PlayerUnNickEvent playerUnNickEvent = new PlayerUnNickEvent(player, false);
         Bukkit.getPluginManager().callEvent(playerUnNickEvent);
 
         // 停止大厅的ActionBar消息任务
         Messages.handleCancelLobbyActionBar(player);
-        GuNick.getNickPlayersName().remove(player.getName());
+        Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
+            API.savePlayerData(player.getUniqueId());
+            GuNick.getPlugin().getDataCache().remove(event.getPlayer().getUniqueId());
+        });
     }
 }

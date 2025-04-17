@@ -8,19 +8,9 @@ public interface Database {
 
     void close();
 
-    String getPlayerNick(UUID uuid);
+    PlayerData loadPlayerData(UUID uuid);
 
-    String getPlayerName(UUID uuid);
+    void savePlayerData(PlayerData data);
 
-    void setPlayerNick(UUID uuid, String playerName, String nickname, String prefix, String suffix, String nickedPrefix, String nickedSuffix);
-
-    void clearNick(UUID uuid);
-
-    String getPlayerPrefix(UUID uuid);
-
-    String getPlayerSuffix(UUID uuid);
-
-    String getPlayerNickedPrefix(UUID uuid);
-
-    String getPlayerNickSuffix(UUID uuid);
+    void deletePlayerData(UUID uuid);
 }
