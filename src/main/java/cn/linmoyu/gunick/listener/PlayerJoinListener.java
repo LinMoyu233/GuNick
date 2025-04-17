@@ -1,9 +1,9 @@
 package cn.linmoyu.gunick.listener;
 
 import cn.linmoyu.gunick.GuNick;
+import cn.linmoyu.gunick.database.PlayerData;
 import cn.linmoyu.gunick.event.PlayerNickEvent;
 import cn.linmoyu.gunick.utils.API;
-import cn.linmoyu.gunick.utils.Config;
 import cn.linmoyu.gunick.utils.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,28 +11,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class PlayerJoinListener implements Listener {
+import java.util.UUID;
 
-    // callEvent, Nick逻辑交给事件监听处理
-    public static void callNickEvent(Player player) {
-        if (Config.isJoinNickAsyncAndReplaceMessage) {
-            Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
-                String nickName = API.getPlayerNick(player.getUniqueId());
-                String nickedPrefix = API.getPlayerNickedPrefix(player.getUniqueId());
-                String nickedSuffix = API.getPlayerNickSuffix(player.getUniqueId());
-                Bukkit.getScheduler().runTask(GuNick.getPlugin(), () -> {
-                    PlayerNickEvent playerNickEvent = new PlayerNickEvent(player, player.getName(), nickName, true, nickedPrefix, nickedSuffix);
-                    Bukkit.getPluginManager().callEvent(playerNickEvent);
-                });
-            });
-        } else {
-            String nickName = API.getPlayerNick(player.getUniqueId());
-            String nickedPrefix = API.getPlayerNickedPrefix(player.getUniqueId());
-            String nickedSuffix = API.getPlayerNickSuffix(player.getUniqueId());
-            PlayerNickEvent playerNickEvent = new PlayerNickEvent(player, player.getName(), nickName, true, nickedPrefix, nickedSuffix);
-            Bukkit.getPluginManager().callEvent(playerNickEvent);
-        }
-    }
+public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -40,22 +21,21 @@ public class PlayerJoinListener implements Listener {
 
         // 防止可能的后遗症
         player.setDisplayName(player.getName());
+        // 常驻任务
         Messages.handleLobbyActionBar(player);
 
-        // 如果玩家没有匿名, 不执行逻辑
-        if (Config.isJoinNickAsyncAndReplaceMessage) {
-
-            Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
-                if (!API.isPlayerNickedDataBase(player.getUniqueId())) return;
-                callNickEvent(player);
-            });
-
-        } else {
-            if (!API.isPlayerNickedDataBase(player.getUniqueId())) return;
-            callNickEvent(player);
-        }
+        // 加载数据
+        UUID playerUUID = player.getUniqueId();
+        PlayerData data = GuNick.getRemoteDatabase().loadPlayerData(playerUUID);
+        if (data != null) {
+            GuNick.getPlugin().getDataCache().put(playerUUID, data);
+        } else return;
+        String playerName = API.getPlayerName(player);
+        String nickName = data.getNickname();
+        String nickedPrefix = data.getNickedPrefix();
+        String nickedSuffix = data.getNickedSuffix();
+        PlayerNickEvent playerNickEvent = new PlayerNickEvent(player, playerName, nickName, true, nickedPrefix, nickedSuffix);
+        Bukkit.getPluginManager().callEvent(playerNickEvent);
 
     }
-
-
 }

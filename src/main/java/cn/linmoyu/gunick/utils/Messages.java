@@ -70,23 +70,24 @@ public class Messages {
 
     public static void handleLobbyActionBar(Player player) {
         if (!Config.actionbar_enable) return;
+        System.out.println("1");
         // 取消现有任务防止重复
         BukkitTask runningTask = actionBarTasks.getOrDefault(player, null);
         if (runningTask != null) {
             runningTask.cancel();
         }
 
-        // sb SuperVanish / PremiumVanish 被迫在task里套拼接
+        // 大神 SuperVanish / PremiumVanish 被迫在task里套拼接
         // 还有好多处理 摆烂了 就让他跑着吧
         actionBarTasks.put(player, (
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         StringBuilder actionBarBuilder = new StringBuilder();
-                        if (Config.actionbar_vanishbar && API.isPlayerVanished(player) && !API.isPlayerNickedDataBase(player.getUniqueId()))
+                        if (Config.actionbar_vanishbar && API.isPlayerVanished(player) && !API.isPlayerDataNicked(player))
                             actionBarBuilder.append(Messages.NICK_ACTIONBAR_IN_INVIS);
 
-                        if (API.isPlayerNickedDataBase(player.getUniqueId())) {
+                        if (API.isPlayerDataNicked(player)) {
                             actionBarBuilder.append(NICK_ACTIONBAR_IN_NICK);
                             if (!player.hasPermission(Permissions.NICK_ON_LOBBY_PERMISSION)) {
                                 actionBarBuilder.append(NICK_ACTIONBAR_IN_NICK_APPEND_ONLY_GAME);
@@ -97,7 +98,7 @@ public class Messages {
                         }
                         GuNick.getVersionSupport().playAction(player, actionBarBuilder.toString());
                     }
-                }.runTaskTimerAsynchronously(GuNick.getPlugin(), 0L, 40L)));
+                }.runTaskTimerAsynchronously(GuNick.getPlugin(), 0L, 20L)));
     }
 
     public static void handleCancelLobbyActionBar(Player player) {

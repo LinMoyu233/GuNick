@@ -1,13 +1,11 @@
 package cn.linmoyu.gunick.database;
 
-import cn.linmoyu.gunick.utils.API;
 import cn.linmoyu.gunick.utils.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.Bukkit;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -105,47 +103,61 @@ public class MySQL implements Database {
     }
 
     @Override
-    public void setPlayerNick(UUID uuid, String playerName, String nickname, String prefix, String suffix, String nickedPrefix, String nickedSuffix) {
-//        if (!API.getPlayerNick(uuid).isEmpty()) {
-//            playerName = API.getPlayerNameFromDatabase(uuid);
-//        }
-        if (!API.getPlayerPrefix(uuid).isEmpty()) {
-            prefix = API.getPlayerPrefix(uuid);
-        }
-        if (!API.getPlayerSuffix(uuid).isEmpty()) {
-            suffix = API.getPlayerSuffix(uuid);
-        }
-        // 防止原有数据跟现有数据冲突, 优先采用原记录数据
+    public PlayerData loadPlayerData(UUID uuid) {
+        String sql = "SELECT * FROM gunick WHERE uuid = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            stmt.setString(1, uuid.toString());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new PlayerData(
+                            uuid,
+                            rs.getString("name"),
+                            rs.getString("nickname"),
+                            rs.getString("prefix"),
+                            rs.getString("suffix"),
+                            rs.getString("nickedprefix"),
+                            rs.getString("nickedsuffix")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            Bukkit.getLogger().severe("加载玩家数据时错误: " + uuid + "\n" + e);
+        }
+        return null;
+    }
+
+    @Override
+    public void savePlayerData(PlayerData data) {
         String sql = "INSERT INTO gunick (uuid, name, nickname, prefix, suffix, nickedprefix, nickedsuffix) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?) "
                 + "ON DUPLICATE KEY UPDATE "
+                + "name = VALUES(name), "
                 + "nickname = VALUES(nickname), "
-                + "name = VALUES(name),"
-                + "nickedPrefix = VALUES(nickedprefix), "
+                + "prefix = VALUES(prefix), "
+                + "suffix = VALUES(suffix), "
+                + "nickedprefix = VALUES(nickedprefix), "
                 + "nickedsuffix = VALUES(nickedsuffix)";
 
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.clearParameters();
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, data.getUuid().toString());
+            stmt.setString(2, data.getName());
+            stmt.setString(3, data.getNickname());
+            stmt.setString(4, data.getPrefix());
+            stmt.setString(5, data.getSuffix());
+            stmt.setString(6, data.getNickedPrefix());
+            stmt.setString(7, data.getNickedSuffix());
 
-            statement.setString(1, uuid.toString());
-            statement.setString(2, playerName);
-            statement.setString(3, nickname);
-            statement.setString(4, prefix);
-            statement.setString(5, suffix);
-            statement.setString(6, nickedPrefix);
-            statement.setString(7, nickedSuffix);
-
-            statement.executeUpdate();
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            Bukkit.getLogger().severe("保存玩家数据时错误: " + data.getUuid() + "\n" + e);
         }
     }
 
     @Override
-    public void clearNick(UUID uuid) {
+    public void deletePlayerData(UUID uuid) {
         String sql = "DELETE FROM gunick WHERE uuid = ?";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -156,134 +168,6 @@ public class MySQL implements Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public List<String> getNickHistory(UUID uuid) {
-        List<String> history = new ArrayList<>();
-        String sql = "SELECT nickname FROM gunick WHERE uuid = ? ORDER BY timestamp DESC LIMIT 10";
-
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, uuid.toString());
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                history.add(rs.getString("nickname"));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return history;
-    }
-
-    @Override
-    public String getPlayerNick(UUID uuid) {
-        String sql = "SELECT nickname FROM gunick WHERE uuid = ?;";
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, uuid.toString());
-                try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
-                        return result.getString(1);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return "";
-    }
-
-    @Override
-    public String getPlayerName(UUID uuid) {
-        String sql = "SELECT name FROM gunick WHERE uuid = ?;";
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, uuid.toString());
-                try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
-                        return result.getString(1);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return "";
-    }
-
-    @Override
-    public String getPlayerPrefix(UUID uuid) {
-        String sql = "SELECT prefix FROM gunick WHERE uuid = ?;";
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, uuid.toString());
-                try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
-                        return result.getString(1);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return "";
-    }
-
-    @Override
-    public String getPlayerSuffix(UUID uuid) {
-        String sql = "SELECT suffix FROM gunick WHERE uuid = ?;";
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, uuid.toString());
-                try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
-                        return result.getString(1);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return "";
-    }
-
-    @Override
-    public String getPlayerNickedPrefix(UUID uuid) {
-        String sql = "SELECT nickedPrefix FROM gunick WHERE uuid = ?;";
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, uuid.toString());
-                try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
-                        return result.getString(1);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return "";
-    }
-
-    @Override
-    public String getPlayerNickSuffix(UUID uuid) {
-        String sql = "SELECT nickedsuffix FROM gunick WHERE uuid = ?;";
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, uuid.toString());
-                try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
-                        return result.getString(1);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return "";
     }
 
 }

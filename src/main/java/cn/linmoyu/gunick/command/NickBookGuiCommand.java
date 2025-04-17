@@ -1,6 +1,7 @@
 package cn.linmoyu.gunick.command;
 
 import cn.linmoyu.gunick.GuNick;
+import cn.linmoyu.gunick.database.PlayerData;
 import cn.linmoyu.gunick.utils.*;
 import com.meteor.bookapi.Book;
 import com.meteor.bookapi.BookApi;
@@ -161,7 +162,6 @@ public class NickBookGuiCommand implements CommandExecutor {
             return true;
         }
 
-//
 
 //        String playerName = player.getName(); // 需要提前缓存playerName, 否则后续存储的还是nick名字
 //
@@ -172,10 +172,10 @@ public class NickBookGuiCommand implements CommandExecutor {
 //
 //        // 大厅处理
 //        if (Config.isLobby) {
-//            Messages.handleLobbyActionBar(player);
 //            // 如果玩家不能在大厅匿名 直接保存数据返回
 //            if (!player.hasPermission(Permissions.NICK_ON_LOBBY_PERMISSION)) {
 //                saveNickData(player, playerName, nickName, nickedPrefix, nickedSuffix);
+//                player.sendMessage(Messages.NICK_SUCCESSFUL_MESSAGE);
 //                return true;
 //            }
 //        }
@@ -191,7 +191,6 @@ public class NickBookGuiCommand implements CommandExecutor {
 //        saveNickData(player, playerName, nickName, nickedPrefix, nickedSuffix);
 //
 //        player.sendMessage(Messages.NICK_SUCCESSFUL_MESSAGE);
-//        return true;
         return true;
     }
 
@@ -226,15 +225,34 @@ public class NickBookGuiCommand implements CommandExecutor {
     }
 
     private void saveNickData(Player player, String playerName, String nickName, String nickedPrefix, String nickedSuffix) {
-        Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
-            UUID uuid = player.getUniqueId();
-            String prefix = LuckPermsUtil.getPrefix(uuid);
-            String suffix = LuckPermsUtil.getSuffix(uuid);
-            API.setPlayerNickToDatabase(uuid, playerName, nickName,
-                    prefix, suffix, nickedPrefix, nickedSuffix);
-            if (!nickedPrefix.isEmpty()) LuckPermsUtil.setPrefix(uuid, nickedPrefix);
-            if (!nickedSuffix.isEmpty()) LuckPermsUtil.setSuffix(uuid, nickedSuffix);
-        });
-    }
+        UUID playerUUID = player.getUniqueId();
+        String prefix = LuckPermsUtil.getPrefix(playerUUID);
+        String suffix = LuckPermsUtil.getSuffix(playerUUID);
 
+        if (GuNick.getPlugin().getDataCache().get(playerUUID) != null) {
+            PlayerData playerData = GuNick.getPlugin().getDataCache().get(playerUUID);
+            playerData.setName(API.getPlayerName(player));
+            playerData.setNickname(nickName);
+            playerData.setPrefix(prefix);
+            playerData.setSuffix(suffix);
+            if (!nickedPrefix.isEmpty()) playerData.setNickedPrefix(nickedPrefix);
+            if (!nickedPrefix.isEmpty()) playerData.setNickedSuffix(nickedSuffix);
+            API.savePlayerData(player.getUniqueId());
+            return;
+        }
+
+        PlayerData playerData = new PlayerData(
+                playerUUID,
+                playerName,
+                nickName,
+                prefix,
+                suffix,
+                nickedPrefix,
+                nickedSuffix
+        );
+        if (!nickedPrefix.isEmpty()) LuckPermsUtil.setPrefix(playerUUID, nickedPrefix);
+        if (!nickedSuffix.isEmpty()) LuckPermsUtil.setSuffix(playerUUID, nickedSuffix);
+        GuNick.getPlugin().getDataCache().put(player.getUniqueId(), playerData);
+        API.savePlayerData(player.getUniqueId());
+    }
 }

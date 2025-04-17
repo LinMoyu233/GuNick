@@ -21,9 +21,6 @@ public class Config {
     public static String lobbyMode;
     public static boolean forceNickCommandOnGame;
 
-    public static boolean isJoinNickAsyncAndReplaceMessage;
-    public static int joinMessageDelay;
-    public static String joinMessageContainChar;
     public static boolean bookGui;
 
     public static boolean actionbar_enable;
@@ -49,10 +46,6 @@ public class Config {
             detectLobby();
         }
         forceNickCommandOnGame = config.getBoolean("forceNickCommandOnGame.enable");
-
-        isJoinNickAsyncAndReplaceMessage = config.getBoolean("joinNickAsyncAndReplaceMessage");
-        joinMessageDelay = config.getInt("joinMessageDelay");
-        joinMessageContainChar = config.getString("joinMessageContainChar");
 
         bookGui = config.getBoolean("bookGui");
 
