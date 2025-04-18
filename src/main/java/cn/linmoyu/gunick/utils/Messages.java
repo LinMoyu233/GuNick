@@ -35,6 +35,21 @@ public class Messages {
     public static String NICK_FAIL_CONTAINS_SPECIAL_CHAR_MESSAGE;
     public static String NICK_FAIL_PLAYER_NAME_KNOWN_MESSAGE;
 
+    public static String NICK_GUI_WARNING;
+    public static String NICK_GUI_WARNING_IKNOW;
+    public static String NICK_GUI_WARNING_IKNOW_HOVER;
+
+    public static String NICK_GUI_RANK_TEXT;
+    public static String NICK_GUI_RANKS;
+    public static String NICK_GUI_RANKS_HOVER;
+
+    public static String NICK_GUI_NICKNAME;
+    public static String NICK_GUI_NICKNAME_INPUTNAME;
+    public static String NICK_GUI_NICKNAME_INPUTNAME_HOVER;
+    public static String NICK_GUI_NICKNAME_ERROR_IN_NICKNAME;
+
+    public static String NICK_FINISH;
+
     public static String UNNICK_FAIL_ALREADY_MESSAGE;
 
     public static void loadMessages(FileConfiguration config) {
@@ -62,15 +77,29 @@ public class Messages {
         NICK_FAIL_PLAYER_NAME_KNOWN_MESSAGE = Messages.translateCC(config.getString("messages.nick_fail_player_name_known_message"));
 
         UNNICK_FAIL_ALREADY_MESSAGE = Messages.translateCC(config.getString("messages.unnick_fail_already"));
+
+        NICK_GUI_WARNING = Messages.translateCC(config.getString("messages.book.warning"));
+        NICK_GUI_WARNING_IKNOW = Messages.translateCC(config.getString("messages.book.warning_iknow"));
+        NICK_GUI_WARNING_IKNOW_HOVER = Messages.translateCC(config.getString("messages.book.warning_iknow_hover"));
+
+        NICK_GUI_RANK_TEXT = Messages.translateCC(config.getString("messages.book.ranktext"));
+        NICK_GUI_RANKS = Messages.translateCC(config.getString("messages.book.ranks"));
+        NICK_GUI_RANKS_HOVER = Messages.translateCC(config.getString("messages.book.ranks_hover"));
+
+        NICK_GUI_NICKNAME = Messages.translateCC(config.getString("messages.book.nickname"));
+        NICK_GUI_NICKNAME_INPUTNAME = Messages.translateCC(config.getString("messages.book.nickname_inputname"));
+        NICK_GUI_NICKNAME_INPUTNAME_HOVER = Messages.translateCC(config.getString("messages.book.nickname_inputname_hover"));
+        NICK_GUI_NICKNAME_ERROR_IN_NICKNAME = Messages.translateCC(config.getString("messages.book.nickname_error_in_nickname"));
+
+        NICK_FINISH = Messages.translateCC(config.getString("messages.book.nick_finish"));
     }
 
     public static String translateCC(String s) {
-        return s.replace("&", "§");
+        return s.replaceAll("&", "§").replaceAll("%nl%", "\n");
     }
 
     public static void handleLobbyActionBar(Player player) {
         if (!Config.actionbar_enable) return;
-        System.out.println("1");
         // 取消现有任务防止重复
         BukkitTask runningTask = actionBarTasks.getOrDefault(player, null);
         if (runningTask != null) {
@@ -78,7 +107,7 @@ public class Messages {
         }
 
         // 大神 SuperVanish / PremiumVanish 被迫在task里套拼接
-        // 还有好多处理 摆烂了 就让他跑着吧
+        // 还有好多处理 摆烂了 就让他常驻吧
         actionBarTasks.put(player, (
                 new BukkitRunnable() {
                     @Override

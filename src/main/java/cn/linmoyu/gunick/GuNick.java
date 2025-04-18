@@ -1,7 +1,6 @@
 package cn.linmoyu.gunick;
 
-//import cn.linmoyu.gunick.command.NickBookGuiCommand;
-
+import cn.linmoyu.gunick.command.NickBookGUICommand;
 import cn.linmoyu.gunick.command.NickCommand;
 import cn.linmoyu.gunick.command.UnNickCommand;
 import cn.linmoyu.gunick.database.Database;
@@ -32,6 +31,8 @@ public final class GuNick extends JavaPlugin implements Listener {
     @Getter
     private static Database remoteDatabase;
     @Getter
+    private final String aboutMessage = Messages.translateCC("§f* This server is running §bGuNick Plugin§f. \n§f* By §b@LinMoyu_ §f| §bYukiEnd §7v" + getDescription().getVersion());
+    @Getter
     private DisguiseProvider disguiseProvider = DisguiseManager.getProvider();
     @Getter
     private ConcurrentHashMap<UUID, PlayerData> dataCache = new ConcurrentHashMap<>();
@@ -48,7 +49,7 @@ public final class GuNick extends JavaPlugin implements Listener {
         plugin = this;
         Config.setupConfig(this);
 
-        connectDatabase();
+        Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), this::connectDatabase);
 
         versionSupport = new v1_8();
 
@@ -57,13 +58,16 @@ public final class GuNick extends JavaPlugin implements Listener {
         pluginManager.registerEvents(new PlayerNickListener(), this);
         pluginManager.registerEvents(new PlayerQuitListener(), this);
         pluginManager.registerEvents(new PlayerUnNickListener(), this);
-        pluginManager.registerEvents(new PlayerCommandListener(), this);
+
+        pluginManager.registerEvents(new PluginCommandListener(), this);
+        pluginManager.registerEvents(new NickBookGUICommand(), this);
 
         getCommand("nick").setExecutor(new NickCommand());
         getCommand("unnick").setExecutor(new UnNickCommand());
-//        getCommand("nickbookgui").setExecutor(new NickBookGuiCommand());
+        getCommand("nickbookgui").setExecutor(new NickBookGUICommand());
 
         DisguiseManager.initialize(this, false);
+        Bukkit.getConsoleSender().sendMessage(aboutMessage);
     }
 
     @Override
@@ -78,7 +82,10 @@ public final class GuNick extends JavaPlugin implements Listener {
         long time = System.currentTimeMillis();
         if (!mySQL.connect()) {
             this.getLogger().severe(Messages.translateCC("&c无法连接至MySQL服务器!"));
-            Bukkit.getPluginManager().disablePlugin(this);
+
+            Bukkit.getScheduler().runTask(GuNick.getPlugin(), () -> {
+                Bukkit.getPluginManager().disablePlugin(this);
+            });
         }
         if (System.currentTimeMillis() - time >= 5000) {
             this.getLogger().warning(Messages.translateCC("&e警告! 数据库连接时间过长. 可能会出现延迟匿名, 从而导致导致效果不佳. " + ((System.currentTimeMillis() - time) / 1000) + "ms"));

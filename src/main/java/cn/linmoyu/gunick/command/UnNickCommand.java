@@ -62,8 +62,9 @@ public class UnNickCommand implements CommandExecutor {
         if (playerData == null) return;
         String prefix = playerData.getPrefix();
         String suffix = playerData.getSuffix();
-        if (!prefix.isEmpty()) LuckPermsUtil.setPrefix(playerUUID, prefix);
-        if (!suffix.isEmpty()) LuckPermsUtil.setSuffix(playerUUID, suffix);
+        LuckPermsUtil.setPrefix(playerUUID, prefix);
+        LuckPermsUtil.setSuffix(playerUUID, suffix);
+        GuNick.getPlugin().getDataCache().remove(playerUUID);
         API.deletePlayerNickFromDatabase(playerUUID);
     }
 }

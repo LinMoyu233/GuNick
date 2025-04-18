@@ -33,7 +33,7 @@ public class API {
     public static void savePlayerData(UUID uuid) {
         Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
             PlayerData playerData = GuNick.getPlugin().getDataCache().get(uuid);
-            GuNick.getRemoteDatabase().savePlayerData(playerData);
+            if (playerData != null) GuNick.getRemoteDatabase().savePlayerData(playerData);
         });
     }
 

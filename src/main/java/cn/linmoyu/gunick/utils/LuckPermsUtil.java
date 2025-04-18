@@ -78,28 +78,22 @@ public final class LuckPermsUtil {
                 });
     }
 
-//    public static String getPrefix(Player player) {
-//        User user = getUser(player);
-//        if (user == null) return "";
-//        String prefix = user.getCachedData().getMetaData().getPrefix();
-//        if (prefix == null) return "";
-//
-//        return Messages.translateCC(prefix);
-//    }
-//
-//    public static String getSuffix(Player player) {
-//        User user = getUser(player);
-//        if (user == null) return "";
-//        String suffix = user.getCachedData().getMetaData().getSuffix();
-//        if (suffix == null) return "";
-//
-//        return Messages.translateCC(suffix);
-//    }
+    public static void clearPrefix(UUID uuid, String prefix) {
+        luckPerms.getUserManager().loadUser(uuid)
+                .thenApplyAsync(user -> {
+                    user.data().clear(NodeType.PREFIX::matches);
+                    luckPerms.getUserManager().saveUser(user);
+                    return true;
+                });
+    }
 
-//    private static User getUser(Player player) {
-//        if (player == null) return null;
-//
-//        return luckPerms.getUserManager().getUser(player.getUniqueId());
-//    }
+    public static void clearSuffix(UUID uuid, String prefix) {
+        luckPerms.getUserManager().loadUser(uuid)
+                .thenApplyAsync(user -> {
+                    user.data().clear(NodeType.SUFFIX::matches);
+                    luckPerms.getUserManager().saveUser(user);
+                    return true;
+                });
+    }
 
 }

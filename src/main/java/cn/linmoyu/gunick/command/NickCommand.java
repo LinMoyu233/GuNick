@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public class NickCommand implements CommandExecutor {
@@ -39,7 +40,8 @@ public class NickCommand implements CommandExecutor {
             return true;
         }
         if (Config.bookGui) {
-            player.performCommand("nickbookgui");
+            String commandArgs = String.join(" ", Arrays.copyOfRange(args, 0, args.length));
+            player.performCommand("nickbookgui " + commandArgs);
             return true;
         }
 
@@ -114,21 +116,19 @@ public class NickCommand implements CommandExecutor {
 
     private void saveNickData(Player player, String playerName, String nickName, String nickedPrefix, String nickedSuffix) {
         UUID playerUUID = player.getUniqueId();
-        String prefix = LuckPermsUtil.getPrefix(playerUUID);
-        String suffix = LuckPermsUtil.getSuffix(playerUUID);
 
         if (GuNick.getPlugin().getDataCache().get(playerUUID) != null) {
             PlayerData playerData = GuNick.getPlugin().getDataCache().get(playerUUID);
             playerData.setName(API.getPlayerName(player));
             playerData.setNickname(nickName);
-            playerData.setPrefix(prefix);
-            playerData.setSuffix(suffix);
-            if (!nickedPrefix.isEmpty()) playerData.setNickedPrefix(nickedPrefix);
-            if (!nickedPrefix.isEmpty()) playerData.setNickedSuffix(nickedSuffix);
+            playerData.setNickedPrefix(nickedPrefix);
+            playerData.setNickedSuffix(nickedSuffix);
             API.savePlayerData(player.getUniqueId());
             return;
         }
 
+        String prefix = LuckPermsUtil.getPrefix(playerUUID);
+        String suffix = LuckPermsUtil.getSuffix(playerUUID);
         PlayerData playerData = new PlayerData(
                 playerUUID,
                 playerName,

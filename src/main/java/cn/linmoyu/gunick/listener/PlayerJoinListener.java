@@ -5,6 +5,7 @@ import cn.linmoyu.gunick.database.PlayerData;
 import cn.linmoyu.gunick.event.PlayerNickEvent;
 import cn.linmoyu.gunick.utils.API;
 import cn.linmoyu.gunick.utils.Messages;
+import cn.linmoyu.gunick.utils.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +23,9 @@ public class PlayerJoinListener implements Listener {
         // 防止可能的后遗症
         player.setDisplayName(player.getName());
         // 常驻任务
-        Messages.handleLobbyActionBar(player);
+        if (player.hasPermission(Permissions.NICK_USE_PERMISSION)) {
+            Messages.handleLobbyActionBar(player);
+        }
 
         // 加载数据
         UUID playerUUID = player.getUniqueId();
