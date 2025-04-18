@@ -2,9 +2,12 @@ package cn.linmoyu.gunick.listener;
 
 import cn.linmoyu.gunick.GuNick;
 import cn.linmoyu.gunick.event.PlayerNickEvent;
+import cn.linmoyu.gunick.utils.API;
 import cn.linmoyu.gunick.utils.Messages;
+import cn.linmoyu.gunick.utils.Permissions;
 import dev.iiahmed.disguise.Disguise;
 import dev.iiahmed.disguise.DisguiseResponse;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,6 +29,11 @@ public class PlayerNickListener implements Listener {
             case SUCCESS:
                 if (event.needRefresh()) GuNick.getPlugin().getDisguiseProvider().refreshAsPlayer(player);
                 player.setDisplayName(nickName);
+                Bukkit.getOnlinePlayers().stream()
+                        .filter(p -> p.hasPermission(Permissions.NICK_NOTIFY_NICK))
+                        .forEach(p -> p.sendMessage(Messages.NICK_COMMAND_NOTIFY_NICK_MESSAGE
+                                .replace("<nickname>", nickName)
+                                .replace("<playername>", API.getPlayerName(player))));
                 break;
             case FAIL_NAME_INVALID:
                 event.setCancelled(true);

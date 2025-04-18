@@ -60,6 +60,7 @@ messages:
   usage_prefix: "&c用法: "
   # = usage_prefix + usage_main
   usage_main: "&c/nick [匿名] <前缀> <后缀>"
+  notify: "&b<nickname>&f为&a<playername>&f的匿名."
   
   actionbar_in_nick: "&f你目前&c已匿名"
   # = actionbar_in_nick + actionbar_in_nick_append_only_game

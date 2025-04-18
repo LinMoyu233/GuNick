@@ -16,6 +16,7 @@ public class Messages {
     public static String NICK_COMMAND_PLAYER_ONLY_MESSAGE;
     public static String NICK_COMMAND_USAGE_PREFIX_MESSAGE;
     public static String NICK_COMMAND_USAGE_MAIN_MESSAGE;
+    public static String NICK_COMMAND_NOTIFY_NICK_MESSAGE;
 
     public static String NICK_COMMAND_ONLY_LOBBY_MESSAGE;
 
@@ -57,6 +58,7 @@ public class Messages {
         NICK_COMMAND_PLAYER_ONLY_MESSAGE = Messages.translateCC(config.getString("messages.player_only"));
         NICK_COMMAND_USAGE_PREFIX_MESSAGE = Messages.translateCC(config.getString("messages.usage_prefix"));
         NICK_COMMAND_USAGE_MAIN_MESSAGE = Messages.translateCC(NICK_COMMAND_USAGE_PREFIX_MESSAGE + config.getString("messages.usage_main"));
+        NICK_COMMAND_NOTIFY_NICK_MESSAGE = Messages.translateCC(config.getString("messages.notify"));
 
         NICK_COMMAND_ONLY_LOBBY_MESSAGE = Messages.translateCC(config.getString("forceNickCommandOnGame.deniedMessage"));
 

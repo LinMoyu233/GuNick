@@ -88,7 +88,7 @@ public final class GuNick extends JavaPlugin implements Listener {
             });
         }
         if (System.currentTimeMillis() - time >= 5000) {
-            this.getLogger().warning(Messages.translateCC("&e警告! 数据库连接时间过长. 可能会出现延迟匿名, 从而导致导致效果不佳. " + ((System.currentTimeMillis() - time) / 1000) + "ms"));
+            this.getLogger().warning(Messages.translateCC("&e警告! 数据库连接时间过长. 可能会导致效果不佳. " + ((System.currentTimeMillis() - time) / 1000) + "ms"));
         }
 
         remoteDatabase = mySQL;
