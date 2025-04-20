@@ -1,6 +1,6 @@
 # GuNick
 ## 这是什么？
-一个简单的Minecraft Bukkit匿名/Nick插件，使用MySQL进行不同子服之间的互通。
+一个简单的Minecraft Bukkit匿名/Nick插件，使用MySQL进行不同子服之间的数据互通。
 
 并使用[ModernDisguise](https://github.com/iiAhmedYT/ModernDisguise)进行匿名。
 
@@ -17,21 +17,22 @@
 
 ![](https://image.linmoyu.top/20250419010214118.webp)
 
-## 未来可能实现(大概率不可能)
-1. 查询在线匿名玩家
-2. 指令查询匿名玩家真实昵称以及最近?条匿名记录
-3. 可设置皮肤
+## 未来可能实现(?)
+1. 指令查询当前子服在线匿名玩家
+2. 指令查询匿名玩家真实昵称以及其最近?条匿名记录
+3. 可自定义皮肤
 4. 随机皮肤/匿名
 5. BookGUI设置前缀可以自定义前缀
+5. BookGUI可以设置后缀
 
-不做皮肤是因为带的Mojang API太玄学了，国内经常down。
+不做皮肤是因为带的Mojang API太玄学了，境内经常down。
 
 没时间折腾其他API了。[ModernDisguise](https://github.com/iiAhmedYT/ModernDisguise)的DisguiseProvider有带setSkin的。
 
 ## 为什么会有这个项目？
 
 笔者从2021年始开了4年的Minecraft服务器，期间并没有发现什么好用的匿名插件。市面上的匿名插件有三种：
-1. 提供PAPI变量，使用其他插件自行修改PlayerTag的名字
+1. 提供PAPI变量，使用其他插件自行修改PlayerTag或PlayerList的名字
 2. 在前者基础上新增了修改DisplayName
 3. 拦截、修改发包
 
