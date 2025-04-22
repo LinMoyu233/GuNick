@@ -24,7 +24,7 @@ public class PlayerQuitListener implements Listener {
         Messages.handleCancelLobbyActionBar(player);
         Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), () -> {
             API.savePlayerData(player.getUniqueId());
-            GuNick.getPlugin().getDataCache().remove(event.getPlayer().getUniqueId());
+            GuNick.getPlugin().getDataCache().remove(player.getUniqueId());
         });
     }
 }

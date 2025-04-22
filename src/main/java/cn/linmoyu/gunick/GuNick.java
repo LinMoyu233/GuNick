@@ -31,7 +31,7 @@ public final class GuNick extends JavaPlugin implements Listener {
     @Getter
     private static Database remoteDatabase;
     @Getter
-    private final String aboutMessage = Messages.translateCC("§f* This server is running §bGuNick Plugin§f. \n§f* By §b@LinMoyu_ §f| §bYukiEnd §7v" + getDescription().getVersion());
+    private final String aboutMessage = Messages.translateCC("§f* This server is running §bGuNick Plugin§f. \n§f* By §b@YukiEnd §f| §bLinMoyu_ §7v" + getDescription().getVersion());
     @Getter
     private DisguiseProvider disguiseProvider = DisguiseManager.getProvider();
     @Getter
@@ -49,7 +49,7 @@ public final class GuNick extends JavaPlugin implements Listener {
         plugin = this;
         Config.setupConfig(this);
 
-        Bukkit.getScheduler().runTaskAsynchronously(GuNick.getPlugin(), this::connectDatabase);
+        connectDatabase();
 
         versionSupport = new v1_8();
 
@@ -83,9 +83,7 @@ public final class GuNick extends JavaPlugin implements Listener {
         if (!mySQL.connect()) {
             this.getLogger().severe(Messages.translateCC("&c无法连接至MySQL服务器!"));
 
-            Bukkit.getScheduler().runTask(GuNick.getPlugin(), () -> {
-                Bukkit.getPluginManager().disablePlugin(this);
-            });
+            Bukkit.getPluginManager().disablePlugin(this);
         }
         if (System.currentTimeMillis() - time >= 5000) {
             this.getLogger().warning(Messages.translateCC("&e警告! 数据库连接时间过长. 可能会导致效果不佳. " + ((System.currentTimeMillis() - time) / 1000) + "ms"));

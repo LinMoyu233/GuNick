@@ -4,6 +4,7 @@ import cn.linmoyu.gunick.GuNick;
 import cn.linmoyu.gunick.database.PlayerData;
 import cn.linmoyu.gunick.event.PlayerNickEvent;
 import cn.linmoyu.gunick.utils.API;
+import cn.linmoyu.gunick.utils.Config;
 import cn.linmoyu.gunick.utils.Messages;
 import cn.linmoyu.gunick.utils.Permissions;
 import org.bukkit.Bukkit;
@@ -33,12 +34,15 @@ public class PlayerJoinListener implements Listener {
         if (data != null) {
             GuNick.getPlugin().getDataCache().put(playerUUID, data);
         } else return;
+        if (Config.isLobby && !player.hasPermission(Permissions.NICK_ON_LOBBY_PERMISSION))
+            return;
         String playerName = API.getPlayerName(player);
         String nickName = data.getNickname();
         String nickedPrefix = data.getNickedPrefix();
         String nickedSuffix = data.getNickedSuffix();
         PlayerNickEvent playerNickEvent = new PlayerNickEvent(player, playerName, nickName, true, nickedPrefix, nickedSuffix);
         Bukkit.getPluginManager().callEvent(playerNickEvent);
+
 
     }
 }

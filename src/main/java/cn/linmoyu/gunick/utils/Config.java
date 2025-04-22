@@ -58,6 +58,7 @@ public class Config {
     public static void reloadConfig(Plugin plugin) {
         plugin.reloadConfig();
         setupConfig(plugin);
+        Messages.loadMessages(plugin.getConfig());
 
         GuNick.getRemoteDatabase().close();
         GuNick.getPlugin().connectDatabase();
