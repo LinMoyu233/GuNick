@@ -7,8 +7,8 @@ database:
   password: password
   ssl: false
 
-# 不推荐在游戏中热匿名, 具体情况看接管PlayerList/PlayerNameTag的插件会不会更新.
-# 如果加入后PlayerList/PlayerNameTag不会更新不建议热匿名, 会导致白名.
+# 不推荐在游戏中热匿名, 具体情况看接管PlayerList/PlayerTag的插件会不会更新.
+# 如果加入后PlayerList/PlayerTag不会更新不建议热匿名, 会导致白名.
 # 因此, 非lobbyMode时会默认屏蔽匿名指令
 # 类型: true false autodetect
 # AutoDetect 仅检测以下插件: SuperLobby, DeluxeHub, Akropolis
@@ -17,7 +17,7 @@ lobbyMode: autodetect
 forceNickCommandOnGame:
   enable: false
   # 不启用功能, 则提示玩家
-  deniedMessage: "&c你只能在大厅使用该命令."
+  denyMessage: "&c你只能在大厅使用该命令."
 
 # 是否在/nick上使用书本和牌子GUI
 # 默认也会注册, 开启此项后使用/nick即执行/nickbookgui
@@ -97,5 +97,5 @@ messages:
     nickname_inputname_hover: "点击这里, 输入你要使用的匿名"
     nickname_error_in_nickname: "&c&l在匿名时发生了一个问题, 请更换匿名后重试: "
 
-    nick_finish: "&0你已经完成昵称设置!%nl%%nl%你的匿名是: %nickedname%.%nl%%nl%想要恢复平常状态, 请输入: &l/nick reset"
+    nick_finish: "&0你已完成匿名设置!%nl%%nl%你的匿名是: %nickedname%.%nl%%nl%要想恢复默认状态, 请使用: &l/nick reset"
 

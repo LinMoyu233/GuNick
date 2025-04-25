@@ -138,7 +138,7 @@ public class NickBookGUICommand implements CommandExecutor, Listener {
             return true;
         }
 
-        // 没传入NickNameArg
+        // 如果玩家没有设置过Nickname
         if (playerNickGuiCache.getNickname().isEmpty()) {
             Book book = new Book();
             TextComponent text = new TextComponent(Messages.NICK_GUI_NICKNAME);
