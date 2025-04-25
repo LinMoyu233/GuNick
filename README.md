@@ -8,7 +8,11 @@
 
 笔者没有时间精力，有BUG能尽量自己修改就自己改，DeepSeek还可以。
 
-## 实现的功能
+# 插件权限
+
+[Permissions.java](https://github.com/LinMoyuu/GuNick/blob/main/src/main/java/cn/linmoyu/gunick/utils/Permissions.java)
+
+## 实现功能
 1. 匿名/取消匿名
 2. 数据库匿名同步
 3. 匿名后提示在线管理玩家真实昵称

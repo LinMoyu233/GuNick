@@ -60,7 +60,7 @@ public class Messages {
         NICK_COMMAND_USAGE_MAIN_MESSAGE = Messages.translateCC(NICK_COMMAND_USAGE_PREFIX_MESSAGE + config.getString("messages.usage_main"));
         NICK_COMMAND_NOTIFY_NICK_MESSAGE = Messages.translateCC(config.getString("messages.notify"));
 
-        NICK_COMMAND_ONLY_LOBBY_MESSAGE = Messages.translateCC(config.getString("forceNickCommandOnGame.deniedMessage"));
+        NICK_COMMAND_ONLY_LOBBY_MESSAGE = Messages.translateCC(config.getString("forceNickCommandOnGame.denyMessage"));
 
         NICK_ACTIONBAR_IN_NICK = Messages.translateCC(config.getString("messages.actionbar_in_nick"));
         NICK_ACTIONBAR_IN_NICK_APPEND_ONLY_GAME = Messages.translateCC(config.getString("messages.actionbar_in_nick_append_only_game"));
